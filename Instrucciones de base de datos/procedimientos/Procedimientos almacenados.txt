@@ -1,0 +1,217 @@
+-- Procedimientos almacenados
+
+
+DELETE FROM Usuario;
+DELETE FROM Pacientes;
+
+
+
+-- validar usuario
+    DELIMITER //
+
+CREATE PROCEDURE ValidarUsuario(
+    IN p_correo VARCHAR(45),
+    IN p_contrasenia VARCHAR(45),
+    IN p_tipo VARCHAR(45),
+    OUT p_valido BOOLEAN,
+    OUT p_idUsuario INT
+)
+BEGIN
+    DECLARE v_idRol INT;
+
+    -- Initialize the output variables
+    SET p_valido = FALSE;
+    SET p_idUsuario = NULL;
+
+    -- Get the idRol for the given tipo
+    SELECT idRol INTO v_idRol
+    FROM Rol
+    WHERE tipo = p_tipo;
+
+    -- Validate user credentials based on correo, contrasenia and Rol_idRol
+    SELECT idUsuario INTO p_idUsuario
+    FROM Usuario
+    WHERE Correo = p_correo
+    AND Contrasenia = p_contrasenia
+    AND Rol_idRol = v_idRol;
+
+    -- If a user is found, set p_valido to TRUE
+    IF p_idUsuario IS NOT NULL THEN
+        SET p_valido = TRUE;
+    END IF;
+END //
+
+DELIMITER ;
+
+SET @valido = FALSE;
+SET @idUsuario = NULL;
+
+CALL ValidarUsuario('medico1@example.com', 'medicopass1', 'Medico', @valido, @idUsuario);
+
+SELECT @valido AS EsValido, @idUsuario AS IdUsuario;
+
+-- procedminiento para registrar un medico
+
+drop procedure RegistrarUsuario;
+DELIMITER //
+
+CREATE PROCEDURE RegistrarUsuario(
+    IN p_correo VARCHAR(45),
+    IN p_contrasenia VARCHAR(45),
+    IN p_tipo VARCHAR(45),
+    IN p_nombre VARCHAR(45),
+    IN p_apaterno VARCHAR(45),
+    IN p_amaterno VARCHAR(45),
+    IN p_cedula VARCHAR(45),
+    IN p_especialidad VARCHAR(45),
+    IN p_domicilio VARCHAR(45),
+    OUT p_idUsuario INT
+)
+BEGIN
+    DECLARE v_idRol INT;
+    DECLARE v_idUsuario INT;
+
+    -- Initialize the output variable
+    SET p_idUsuario = NULL;
+
+    -- Get the idRol for the given tipo
+    SELECT idRol INTO v_idRol
+    FROM Rol
+    WHERE tipo = p_tipo;
+
+    -- Insert the new user into the Usuario table
+    INSERT INTO Usuario (Rol_idRol, Correo, Contrasenia)
+    VALUES (v_idRol, p_correo, p_contrasenia);
+
+    -- Get the idUsuario of the newly inserted user
+    SET v_idUsuario = LAST_INSERT_ID();
+
+    -- Depending on the role, insert into the corresponding table
+    IF p_tipo = 'medico' THEN
+        INSERT INTO Medicos (Usuario_idUsuario, NombreMedico, Apaterno, Amaterno, Cedula, Especialidad, Domicilio)
+        VALUES (v_idUsuario, p_nombre, p_apaterno, p_amaterno, p_cedula, p_especialidad, p_domicilio);
+    ELSEIF p_tipo = 'recepcionista' THEN
+        INSERT INTO Recepcionista (Usuario_idUsuario, NombreRecep)
+        VALUES (v_idUsuario, CONCAT(p_nombre, ' '));
+    END IF;
+
+    -- Set the output variable
+    SET p_idUsuario = v_idUsuario;
+END //
+
+DELIMITER ;
+
+
+
+DESCRIBE Usuario;
+DESCRIBE Medicos;
+DESCRIBE Recepcionista;
+select * from usuario;
+select * from Recepcionista;
+select * from medicos;
+DESCRIBE  Pacientes;
+SELECT * FROM  pacientes;
+use centromedico;
+
+
+
+-- fin
+
+-- Eliminar usuario
+DELIMITER //
+
+CREATE PROCEDURE EliminarUsuario(
+    IN p_idUsuario INT
+)
+BEGIN
+    -- Eliminar el usuario de la tabla Usuario
+    DELETE FROM Usuario WHERE idUsuario = p_idUsuario;
+END //
+
+DELIMITER ;
+
+-- fin
+
+DELIMITER //
+
+CREATE PROCEDURE AsignarMedicoARecepcionista(
+    IN p_recepcionista_id INT,
+    IN p_medico_id INT
+)
+BEGIN
+    INSERT INTO Dr_asignado (Recepcionista_idRecepcion, Medicos_idMedicos)
+    VALUES (p_recepcionista_id, p_medico_id);
+END //
+
+DELIMITER ;
+
+
+DELIMITER //
+
+CREATE PROCEDURE CrearCita(
+    IN p_recepcion_id INT,
+    IN p_medicos_id INT,
+    IN p_pacientes_id INT,
+    IN p_centromedico_id INT,
+    IN p_dia VARCHAR(15),
+    IN p_hora TIME,
+    OUT p_idCita INT
+)
+BEGIN
+    -- Initialize the output variable
+    SET p_idCita = NULL;
+
+    -- Insert the new cita into the Citas table
+    INSERT INTO Citas (Recepcion_idRecepcion, Medicos_idMedicos, Pacientes_idPacientes, Centromedico_idCentromedico, Dia, Hora)
+    VALUES (p_recepcion_id, p_medicos_id, p_pacientes_id, p_centromedico_id, p_dia, p_hora);
+
+    -- Get the idCitas of the newly inserted cita
+    SET p_idCita = LAST_INSERT_ID();
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE RegistrarPaciente(
+    IN p_nombre VARCHAR(45),
+    IN p_apaterno VARCHAR(45),
+    IN p_amaterno VARCHAR(45),
+    IN p_fechanac DATE,
+    IN p_padecimientos VARCHAR(100),
+    IN p_receta VARCHAR(100),
+    OUT p_idPaciente INT
+)
+BEGIN
+    -- Initialize the output variable
+    SET p_idPaciente = NULL;
+
+    -- Insert the new patient into the Pacientes table
+    INSERT INTO Pacientes (Nombre, Apaterno, Amaterno, Fechanac, Padecimientos, Receta)
+    VALUES (p_nombre, p_apaterno, p_amaterno, p_fechanac, p_padecimientos, p_receta);
+
+    -- Get the idPacientes of the newly inserted patient
+    SET p_idPaciente = LAST_INSERT_ID();
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE ObtenerHistorialMedico(
+    IN p_pacientes_id INT
+)
+BEGIN
+    SELECT hm.idHistorial_medico, hm.Citas_idCitas, c.Dia, c.Hora,
+           m.NombreMedico AS Nombre, m.Apaterno, m.Amaterno,
+           p.Padecimientos, p.Receta
+    FROM Historial_medico hm
+    JOIN Citas c ON hm.Citas_idCitas = c.idCitas
+    JOIN Medicos m ON c.Medicos_idMedicos = m.idMedicos
+    JOIN Pacientes p ON hm.Pacientes_idPacientes = p.idPacientes
+    WHERE hm.Pacientes_idPacientes = p_pacientes_id;
+END //
+
+DELIMITER ;
+
+-- procedimiento para eliminar pacientes

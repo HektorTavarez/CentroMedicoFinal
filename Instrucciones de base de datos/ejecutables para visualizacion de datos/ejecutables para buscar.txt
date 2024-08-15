@@ -1,0 +1,13 @@
+use centromedico;
+SELECT * FROM Usuario;
+SELECT * FROM Medicos;
+SELECT * FROM Recepcionista;
+SELECT * FROM Pacientes;
+SELECT * FROM Centromedico;
+SELECT * FROM Citas;
+SELECT * FROM Dr_asignado;
+SELECT * FROM Historial_medico;
+SELECT * FROM Citas WHERE Medicos_idMedicos = 1;
+SELECT * FROM Citas WHERE Pacientes_idPacientes = 1;
+SELECT * FROM Historial_medico WHERE Pacientes_idPacientes = 1;
+SELECT * FROM Historial_medico WHERE Citas_idCitas = 1;

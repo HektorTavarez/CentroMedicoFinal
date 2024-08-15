@@ -1,0 +1,48 @@
+-- Inserciones
+INSERT INTO Rol (idRol, tipo) VALUES
+(1, 'Admin'),
+(2, 'Medico'),
+(3, 'Recepcionista');
+
+select * from Rol;
+
+INSERT INTO Usuario (Rol_idRol, Correo, Contrasenia) VALUES
+(1, 'admin@example.com', 'adminpass'),
+(2, 'medico1@example.com', 'medicopass1'),
+(2, 'medico2@example.com', 'medicopass2'),
+(3, 'recepcionista1@example.com', 'receppass1'),
+(3, 'recepcionista2@example.com', 'receppass2');
+
+INSERT  INTO Usuario (Rol_idRol, Correo, Contrasenia) VALUES
+(1, 'admin@example.com' , 'adminpass');
+
+
+select * from Usuario;
+
+INSERT INTO Medicos (Usuario_idUsuario, Cedula, Especialidad, Domicilio, NombreMedico, Apaterno, Amaterno) VALUES
+(2, '12345', 'Cardiología', 'Calle 1, Ciudad', 'Juan', 'Perez', 'Lopez'),
+(3, '67890', 'Pediatría', 'Calle 2, Ciudad', 'Ana', 'Martinez', 'Garcia');
+
+INSERT INTO Recepcionista (Usuario_idUsuario, NombreRecep) VALUES
+(4, 'Juan Perez'),
+(5, 'Ana Garcia');
+
+INSERT INTO Pacientes (Nombre, Apaterno, Amaterno, Fechanac, Padecimientos, Receta) VALUES
+('Carlos', 'Sanchez', 'Lopez', '1980-05-20', 'Diabetes', 'Metformina 500mg'),
+('Laura', 'Gomez', 'Martinez', '1992-08-15', 'Hipertensión', 'Losartan 50mg');
+
+INSERT INTO Centromedico (Localizacion) VALUES
+('Centro Medico ABC'),
+('Hospital XYZ');
+
+INSERT INTO Citas (Recepcion_idRecepcion, Medicos_idMedicos, Pacientes_idPacientes, Centromedico_idCentromedico, Dia, Hora) VALUES
+(1, 1, 1, 1, '2024-06-01', '10:00:00'),
+(2, 2, 2, 2, '2024-06-02', '11:00:00');
+
+INSERT INTO Dr_asignado (Recepcionista_idRecepcion, Medicos_idMedicos) VALUES
+(1, 1),
+(2, 2);
+
+INSERT INTO Historial_medico (Pacientes_idPacientes, Citas_idCitas) VALUES
+(1, 1),
+(2, 2);
