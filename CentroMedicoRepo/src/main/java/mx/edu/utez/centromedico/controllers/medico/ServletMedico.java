@@ -1,4 +1,4 @@
-package mx.edu.utez.centromedico.controllers.medico;
+/*package mx.edu.utez.centromedico.controllers.medico;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -58,3 +58,4 @@ public class ServletMedico extends HttpServlet {
         }
     }
 }
+*/

@@ -1,6 +1,8 @@
 package mx.edu.utez.centromedico.models.recepcionistas;
 
 import mx.edu.utez.centromedico.models.crud.DaoRepository;
+import mx.edu.utez.centromedico.models.medicos.BeanMedico;
+import mx.edu.utez.centromedico.models.pacientes.BeanPacientes;
 import mx.edu.utez.centromedico.models.pacientes.DaoPacientes;
 import mx.edu.utez.centromedico.models.user.User;
 import mx.edu.utez.centromedico.utils.MySQLConnection;
@@ -80,7 +82,17 @@ public class DaoRecepcionista implements DaoRepository<BeanRecepcionista> {
     }
 
     @Override
+    public boolean save(BeanMedico object) {
+        return false;
+    }
+
+    @Override
     public boolean save(BeanRecepcionista object) {
+        return false;
+    }
+
+    @Override
+    public boolean save(BeanPacientes object) {
         return false;
     }
 

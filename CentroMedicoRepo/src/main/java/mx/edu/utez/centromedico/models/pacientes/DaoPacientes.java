@@ -3,12 +3,12 @@ package mx.edu.utez.centromedico.models.pacientes;
 
 
         import mx.edu.utez.centromedico.models.crud.DaoRepository;
-        import mx.edu.utez.centromedico.models.user.DaoUser;
+        import mx.edu.utez.centromedico.models.medicos.BeanMedico;
+        import mx.edu.utez.centromedico.models.recepcionistas.BeanRecepcionista;
         import mx.edu.utez.centromedico.models.user.User;
         import mx.edu.utez.centromedico.utils.MySQLConnection;
 
         import java.sql.*;
-        import java.time.LocalDate;
         import java.util.ArrayList;
         import java.util.List;
         import java.util.logging.Level;
@@ -87,6 +87,16 @@ public class DaoPacientes implements DaoRepository<BeanPacientes> {
         }
 
         return null;
+    }
+
+    @Override
+    public boolean save(BeanMedico object) {
+        return false;
+    }
+
+    @Override
+    public boolean save(BeanRecepcionista object) {
+        return false;
     }
 
     @Override

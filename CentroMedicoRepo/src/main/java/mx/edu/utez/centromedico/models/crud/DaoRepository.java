@@ -1,6 +1,9 @@
 package mx.edu.utez.centromedico.models.crud;
 
 
+import mx.edu.utez.centromedico.models.medicos.BeanMedico;
+import mx.edu.utez.centromedico.models.pacientes.BeanPacientes;
+import mx.edu.utez.centromedico.models.recepcionistas.BeanRecepcionista;
 import mx.edu.utez.centromedico.models.user.User;
 
 import java.sql.SQLException;
@@ -13,6 +16,13 @@ public interface DaoRepository <T>{
     List<User> searchRole();
 
     T finOne(Long id);
+
+    boolean save(BeanMedico object);
+
+    boolean save(BeanRecepcionista object);
+
+    boolean save(BeanPacientes object);
+
     boolean update(T object) throws SQLException;
     boolean delete(Long id);
 
